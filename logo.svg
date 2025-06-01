@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- Fondo circular -->
+  <circle cx="100" cy="100" r="90" fill="#2c3e50" />
+  
+  <!-- Hexágono exterior (escudo) -->
+  <polygon points="100,25 160,50 160,150 100,175 40,150 40,50" fill="#3498db" stroke="#2980b9" stroke-width="2" />
+  
+  <!-- Hexágono interior -->
+  <polygon points="100,45 145,65 145,135 100,155 55,135 55,65" fill="#2c3e50" stroke="#2980b9" stroke-width="1" />
+  
+  <!-- Letra U estilizada -->
+  <path d="M75,70 L75,115 Q75,125 85,125 L115,125 Q125,125 125,115 L125,70" stroke="#e74c3c" stroke-width="8" fill="none" stroke-linecap="round" />
+  
+  <!-- Líneas de conexión (representando red) -->
+  <line x1="65" y1="90" x2="135" y2="90" stroke="#f1c40f" stroke-width="2" stroke-dasharray="5,3" />
+  <line x1="65" y1="105" x2="135" y2="105" stroke="#f1c40f" stroke-width="2" stroke-dasharray="5,3" />
+  
+  <!-- Puntos de conexión -->
+  <circle cx="65" cy="90" r="3" fill="#e74c3c" />
+  <circle cx="135" cy="90" r="3" fill="#e74c3c" />
+  <circle cx="65" cy="105" r="3" fill="#e74c3c" />
+  <circle cx="135" cy="105" r="3" fill="#e74c3c" />
+  
+  <!-- Texto UnityDex -->
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">UnityDex</text>
+</svg>

@@ -1,0 +1,118 @@
+{
+    "general": {
+        "log_level": "info",
+        "log_file": "unitydex.log",
+        "check_updates": true,
+        "save_history": true,
+        "history_file": "history.log",
+        "max_history_entries": 100,
+        "theme": "dark_blue",
+        "language": "es",
+        "auto_detect_interface": true,
+        "interactive_mode": false
+    },
+    "network_scan": {
+        "default_method": "quick",
+        "timeout": 300,
+        "max_retries": 3,
+        "exclude_hosts": [],
+        "custom_nmap_args": ""
+    },
+    "packet_capture": {
+        "default_duration": 60,
+        "default_filter": "",
+        "max_file_size": 1024,
+        "split_files": true,
+        "compress_output": false
+    },
+    "web_scan": {
+        "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+        "timeout": 30,
+        "follow_redirects": true,
+        "max_depth": 3,
+        "scan_forms": true,
+        "scan_cookies": true,
+        "custom_headers": {}
+    },
+    "dictionary_attack": {
+        "default_wordlists": {
+            "ssh": "/usr/share/wordlists/rockyou.txt",
+            "ftp": "/usr/share/wordlists/rockyou.txt",
+            "smb": "/usr/share/wordlists/rockyou.txt"
+        },
+        "max_threads": 4,
+        "timeout": 60,
+        "stop_on_success": true
+    },
+    "wireless_scan": {
+        "scan_duration": 30,
+        "save_handshakes": true,
+        "handshakes_dir": "handshakes",
+        "target_channels": [],
+        "exclude_bssids": []
+    },
+    "mitm": {
+        "enable_sslstrip": true,
+        "enable_dns_spoof": false,
+        "dns_spoof_hosts": {},
+        "capture_credentials": true,
+        "credentials_file": "credentials.txt",
+        "inject_js": "",
+        "inject_html": ""
+    },
+    "ssl_analysis": {
+        "check_heartbleed": true,
+        "check_poodle": true,
+        "check_freak": true,
+        "check_logjam": true,
+        "check_beast": true,
+        "check_ciphers": true,
+        "custom_checks": []
+    },
+    "port_scan": {
+        "default_ports": "1-1000",
+        "default_timing": 4,
+        "scan_udp": false,
+        "scan_sctp": false,
+        "service_detection": true,
+        "os_detection": true
+    },
+    "reporting": {
+        "default_format": "markdown",
+        "include_timestamp": true,
+        "include_system_info": true,
+        "include_network_map": true,
+        "include_recommendations": true,
+        "company_name": "",
+        "logo_path": "",
+        "report_template": "default"
+    },
+    "proxy": {
+        "enabled": false,
+        "http": "",
+        "https": "",
+        "socks": "",
+        "no_proxy": ["localhost", "127.0.0.1"]
+    },
+    "custom_tools": {
+        "enabled": true,
+        "tools_directory": "tools",
+        "autoload": true
+    },
+    "malware_analysis": {
+        "virustotal_api_key": "",
+        "save_reports": true,
+        "reports_directory": "malware_reports",
+        "sandbox_enabled": false,
+        "sandbox_timeout": 120,
+        "yara_rules_path": "rules/malware"
+    },
+    "network_vulnerability": {
+        "scan_timeout": 600,
+        "max_threads": 5,
+        "vuln_database": "vulnerabilities.db",
+        "update_database": true,
+        "save_reports": true,
+        "reports_directory": "vuln_reports"
+    }
+}
