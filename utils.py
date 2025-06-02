@@ -411,6 +411,27 @@ def get_default_gateway():
         logger.error(f"Error al obtener gateway predeterminado: {str(e)}")
     return None
 
+# Obtener la interfaz de red predeterminada
+def get_default_interface():
+    '''
+    Obtiene el nombre de la interfaz de red predeterminada
+    '''
+    try:
+        if sys.platform.startswith('linux'):
+            output = run_command(['ip', 'route', 'show', 'default'])
+            if output:
+                match = re.search(r'default via \S+ dev (\S+)', output)
+                if match:
+                    return match.group(1)
+        else:
+            import netifaces
+            gateways = netifaces.gateways()
+            if 'default' in gateways and netifaces.AF_INET in gateways['default']:
+                return gateways['default'][netifaces.AF_INET][1]
+    except Exception as e:
+        logger.error(f"Error al obtener interfaz predeterminada: {str(e)}")
+    return None
+
 # Verificar conectividad a Internet
 def check_internet_connection():
     '''

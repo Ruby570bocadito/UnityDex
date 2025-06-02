@@ -4,7 +4,7 @@
   <img src="logo.svg" alt="UnityDex Logo" width="200" height="200">
 </p>
 
-UnityDex es una herramienta multifuncional para análisis de seguridad en redes, diseñada para entornos de prueba controlados y uso especializado en Kali Linux, Windows y otras distribuciones. Combina múltiples funcionalidades de seguridad en una interfaz unificada.
+UnityDex es una herramienta multifuncional para análisis de seguridad en redes, diseñada para entornos de prueba controlados y uso especializado en Kali Linux, Windows y otras distribuciones. Combina múltiples funcionalidades de seguridad en una interfaz unificada para facilitar tareas de análisis de seguridad, pentesting y hacking ético.
 
 ## Características
 
@@ -30,9 +30,23 @@ UnityDex es una herramienta multifuncional para análisis de seguridad en redes,
 - Kali Linux o distribución similar (Parrot OS, BlackArch)
 - Python 3.x
 - Privilegios de administrador (root)
-- Dependencias: nmap, tcpdump, wireshark, aircrack-ng, mitmproxy
+- Dependencias: nmap, tcpdump, wireshark, tshark, aircrack-ng, yara, libpcap-dev, libfuzzy-dev
+- Módulos Python: requests, scapy, paramiko, python-nmap, pyOpenSSL, colorama, pefile, yara-python, ssdeep
 
 ## Instalación
+
+### En Kali Linux (Recomendado)
+
+Para Kali Linux, se proporciona un script de instalación automatizado:
+
+```bash
+chmod +x install_kali.sh
+sudo ./install_kali.sh
+```
+
+Este script instalará todas las dependencias necesarias del sistema y los módulos Python requeridos. Para más detalles, consulta [README_KALI.md](README_KALI.md).
+
+### Instalación Manual
 
 1. Clonar el repositorio o descargar los archivos de UnityDex
 2. Instalar las dependencias requeridas:
@@ -77,7 +91,21 @@ Características del modo interactivo:
 
 ### Modo Línea de Comandos
 
-UnityDex también puede ejecutarse directamente desde la línea de comandos para tareas específicas:
+UnityDex también puede ejecutarse directamente desde la línea de comandos para tareas específicas. Opciones generales disponibles para todos los modos:
+
+```bash
+# Mostrar versión
+sudo ./unitydex.py -v
+
+# Omitir verificación de dependencias
+sudo ./unitydex.py --no-check [comandos]
+
+# Forzar ejecución incluso si faltan dependencias
+sudo ./unitydex.py --force [comandos]
+
+# Detectar interfaz automáticamente
+sudo ./unitydex.py --auto-interface [comandos]
+```
 
 ### Escaneo de red
 
@@ -278,6 +306,39 @@ python unitydex.py mitm -i eth0 -t 192.168.1.10 -g 192.168.1.1 --https-inspectio
 ```
 
 Este ejemplo muestra cómo utilizar las nuevas funcionalidades de hacking ético en un ataque MITM, incluyendo inspección HTTPS, detección de inyecciones de scripts, análisis de contenedores, generación de informes de cumplimiento y más.
+
+## Solución de Problemas
+
+### Dependencias Faltantes
+
+Si encuentras errores relacionados con dependencias faltantes:
+
+1. En Kali Linux, ejecuta nuevamente el script de instalación:
+   ```bash
+   sudo ./install_kali.sh
+   ```
+
+2. Para forzar la ejecución a pesar de dependencias faltantes:
+   ```bash
+   sudo ./unitydex.py --force [comandos]
+   ```
+
+3. Para problemas con módulos específicos:
+   ```bash
+   # Para problemas con pypcap
+   sudo apt-get install python3-dev libpcap-dev
+   pip3 install pypcap
+
+   # Para problemas con yara-python
+   sudo apt-get install yara python3-yara
+   pip3 install yara-python
+
+   # Para problemas con ssdeep
+   sudo apt-get install libfuzzy-dev
+   pip3 install ssdeep
+   ```
+
+Para más detalles sobre solución de problemas en Kali Linux, consulta [README_KALI.md](README_KALI.md).
 
 ## Advertencia
 

@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import argparse
 import json
 import os
@@ -79,21 +82,147 @@ def check_root():
 def check_kali():
     try:
         import os
-        if os.uname()[0] != 'Linux':
-            print(f"{COLORS['FAIL']}[!] UnityDex debe ser ejecutado en Kali Linux{COLORS['ENDC']}")
-            sys.exit(0)
-    except:
-        pass
+        import platform
+        # Verificar si es Linux
+        if platform.system() != 'Linux':
+            print(f"{COLORS['WARNING']}[!] UnityDex está diseñado para Linux, algunas funciones pueden no estar disponibles{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[i] Si estás en Windows, considera usar WSL o una máquina virtual con Kali Linux{COLORS['ENDC']}")
+            return False
+        
+        # Intentar detectar si es Kali Linux
+        try:
+            with open('/etc/os-release', 'r') as f:
+                content = f.read().lower()
+                if 'kali' in content:
+                    print(f"{COLORS['SUCCESS']}[+] Kali Linux detectado. Todas las funciones están disponibles{COLORS['ENDC']}")
+                    return True
+                else:
+                    # Extraer el nombre de la distribución para informar al usuario
+                    import re
+                    distro_name = re.search(r'name="?([^"]*)"?', content)
+                    distro = distro_name.group(1) if distro_name else "desconocida"
+                    print(f"{COLORS['WARNING']}[!] Estás ejecutando {distro}, no Kali Linux{COLORS['ENDC']}")
+                    print(f"{COLORS['INFO']}[i] Algunas herramientas específicas de Kali pueden no estar disponibles{COLORS['ENDC']}")
+                    print(f"{COLORS['INFO']}[i] Ejecuta ./install_kali.sh para instalar las dependencias necesarias{COLORS['ENDC']}")
+        except FileNotFoundError:
+            print(f"{COLORS['WARNING']}[!] No se pudo determinar la distribución Linux{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[i] Se recomienda usar Kali Linux para todas las funcionalidades{COLORS['ENDC']}")
+        
+        return True
+    except Exception as e:
+        print(f"{COLORS['WARNING']}[!] No se pudo verificar el sistema operativo: {str(e)}{COLORS['ENDC']}")
+        return True  # Continuar de todos modos
 
 # Función para verificar dependencias
 def check_dependencies():
+    missing_bins = []
+    missing_modules = []
+    optional_bins = []
+    optional_modules = []
+    
+    # Verificar dependencias críticas
     try:
         import os
-        if not os.path.exists('/usr/bin/nmap'):
-            print(f"{COLORS['FAIL']}[!] Módulo 'python-nmap' no encontrado. Instale python-nmap para escaneo de red.{COLORS['ENDC']}")
-            sys.exit(0)
-    except:
-        pass
+        import shutil
+        
+        # Verificar binarios esenciales
+        essential_bins = [
+            'nmap',          # Escaneo de red
+            'tcpdump',       # Captura de paquetes
+            'python3',       # Intérprete Python
+            'pip3'           # Gestor de paquetes Python
+        ]
+        
+        for binary in essential_bins:
+            if shutil.which(binary) is None:
+                missing_bins.append(binary)
+        
+        # Verificar binarios opcionales pero recomendados
+        optional_bin_list = [
+            'wireshark',     # Análisis de tráfico
+            'tshark',        # Wireshark CLI
+            'aircrack-ng',   # Análisis WiFi
+            'yara',          # Análisis de malware
+            'sqlmap',        # Análisis de vulnerabilidades SQL
+            'hydra',         # Ataques de fuerza bruta
+            'metasploit'     # Framework de explotación
+        ]
+        
+        for binary in optional_bin_list:
+            if shutil.which(binary) is None:
+                optional_bins.append(binary)
+        
+        # Verificar módulos Python esenciales
+        essential_modules = [
+            'requests',      # Peticiones HTTP
+            'scapy',         # Manipulación de paquetes
+            'paramiko',      # Conexiones SSH
+            'colorama'       # Colores en terminal
+        ]
+        
+        for module in essential_modules:
+            try:
+                __import__(module)
+            except ImportError:
+                missing_modules.append(module)
+        
+        # Verificar módulos Python opcionales
+        optional_module_list = [
+            'python-nmap',    # Interfaz para nmap
+            'pyOpenSSL',     # Análisis SSL/TLS
+            'cryptography',  # Funciones criptográficas
+            'matplotlib',    # Gráficos
+            'pandas',        # Análisis de datos
+            'beautifulsoup4', # Análisis HTML
+            'pypcap',        # Captura de paquetes
+            'pefile',        # Análisis de ejecutables
+            'yara-python',   # Reglas YARA
+            'ssdeep',        # Fuzzy hashing
+            'vulners'        # Base de datos de vulnerabilidades
+        ]
+        
+        for module in optional_module_list:
+            try:
+                module_name = module.replace('-', '_')
+                __import__(module_name)
+            except ImportError:
+                optional_modules.append(module)
+        
+        # Mostrar resultados
+        all_ok = True
+        
+        if missing_bins:
+            print(f"{COLORS['FAIL']}[!] Faltan binarios esenciales: {', '.join(missing_bins)}{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[*] Instale con: sudo apt update && sudo apt install {' '.join(missing_bins)}{COLORS['ENDC']}")
+            all_ok = False
+        
+        if missing_modules:
+            print(f"{COLORS['FAIL']}[!] Faltan módulos Python esenciales: {', '.join(missing_modules)}{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[*] Instale con: pip3 install {' '.join(missing_modules)}{COLORS['ENDC']}")
+            all_ok = False
+        
+        if optional_bins:
+            print(f"{COLORS['WARNING']}[!] Herramientas opcionales no encontradas: {', '.join(optional_bins)}{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[*] Algunas funciones avanzadas pueden no estar disponibles{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[*] Para instalar: sudo apt install {' '.join(optional_bins)}{COLORS['ENDC']}")
+        
+        if optional_modules:
+            print(f"{COLORS['WARNING']}[!] Módulos Python opcionales no encontrados: {', '.join(optional_modules)}{COLORS['ENDC']}")
+            print(f"{COLORS['INFO']}[*] Para instalar: pip3 install {' '.join(optional_modules)}{COLORS['ENDC']}")
+        
+        if all_ok:
+            print(f"{COLORS['SUCCESS']}[+] Todas las dependencias esenciales están instaladas{COLORS['ENDC']}")
+            if not optional_bins and not optional_modules:
+                print(f"{COLORS['SUCCESS']}[+] Todas las dependencias opcionales están instaladas{COLORS['ENDC']}")
+        
+        # Sugerir script de instalación
+        if not all_ok or optional_bins or optional_modules:
+            print(f"{COLORS['INFO']}[i] Ejecute ./install_kali.sh para instalar todas las dependencias automáticamente{COLORS['ENDC']}")
+        
+        return all_ok
+    except Exception as e:
+        print(f"{COLORS['FAIL']}[!] Error al verificar dependencias: {str(e)}{COLORS['ENDC']}")
+        return False
 
 # Función para modo interactivo
 def interactive_mode():
@@ -1385,6 +1514,12 @@ def network_vulnerability_scan(target, scan_type='full'):
 
 # Función principal
 def main():
+    # Mostrar banner
+    print_banner()
+    
+    # Verificar sistema operativo
+    is_compatible = check_kali()
+    
     parser = argparse.ArgumentParser(description='UnityDex - Herramienta avanzada para análisis de seguridad en redes')
     
     # Argumentos generales
@@ -1393,9 +1528,25 @@ def main():
     parser.add_argument('-i', '--interactive', action='store_true', help='Iniciar en modo interactivo')
     parser.add_argument('-c', '--config', action='store_true', help='Configurar herramienta')
     parser.add_argument('--auto-interface', action='store_true', help='Detectar interfaz automáticamente')
+    parser.add_argument('--force', action='store_true', help='Forzar ejecución incluso si faltan dependencias')
     
     # Subparsers para diferentes modos
     subparsers = parser.add_subparsers(dest='mode', help='Modo de operación')
+    
+    # Procesar argumentos iniciales
+    args, remaining_args = parser.parse_known_args()
+    
+    # Mostrar versión si se solicita
+    if args.version:
+        print(f"{COLORS['INFO']}UnityDex versión {VERSION}{COLORS['ENDC']}")
+        return
+    
+    # Verificar dependencias si no se omite
+    if not args.no_check:
+        deps_ok = check_dependencies()
+        if not deps_ok and not args.force:
+            print(f"{COLORS['WARNING']}[!] Use la opción --force para ejecutar de todos modos (no recomendado){COLORS['ENDC']}")
+            return
     
     # Modo de escaneo de red
     scan_parser = subparsers.add_parser('scan', help='Escaneo de red')
@@ -1927,3 +2078,14 @@ def main():
             print(f"{COLORS['FAIL']}[!] No se pudo importar el módulo de análisis avanzado de malware{COLORS['ENDC']}")
     elif args.mode == 'ddos':
         ddos_attack(args.target, args.port, args.method, args.duration, args.threads)
+
+# Llamar a la función principal si se ejecuta directamente
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n{COLORS['WARNING']}[!] Programa interrumpido por el usuario{COLORS['ENDC']}")
+    except Exception as e:
+        print(f"\n{COLORS['FAIL']}[!] Error: {str(e)}{COLORS['ENDC']}")
+        import traceback
+        traceback.print_exc()
